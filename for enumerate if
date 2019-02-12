@@ -1,6 +1,79 @@
 #enumerate() 函数用于将一个可遍历的数据对象(如列表、元组或字符串)组合为一个索引序列，同时列出数据和数据下标，一般用在 for 循环当中。
 #在同时需要index和value值的时候可以使用 enumerate
 
-
 #trainY是一个长度为60000的array，代码的功能是将trainY中的数等于9的序号，组成array，赋值给index
 index=[i for i,y in enumerate(trainY) if y==9]
+
+
+
+
+
+
+def load_mnist_2(batch_size, type='inl', is_training=True):
+    '''
+    功能：读数据集。训练初始模型：读取0-8    训练增量学习的模型：读取9
+    作者：朱凡凡
+    :param batch_size:
+    :param type: 是训练初始模型，还是训练增量学习的模型
+    :param is_training:
+    :return:
+    '''
+    path = os.path.join('data', 'mnist-tttt')
+    if is_training:
+        fd = open(os.path.join(path, 'train-images-idx3-ubyte'))
+        loaded = np.fromfile(file=fd, dtype=np.uint8)
+        trainX = loaded[16:].reshape((60000, 28, 28, 1)).astype(np.float32)
+        fd = open(os.path.join(path, 'train-labels-idx1-ubyte'))
+        loaded = np.fromfile(file=fd, dtype=np.uint8)
+        trainY = loaded[8:].reshape((60000)).astype(np.int32)
+        # print trainY.size
+        #数据筛选
+        #是增量训练的数据
+        if type=='inl':
+            index=[i for i, y in enumerate(trainY) if y == 9]
+            train_num = 5000
+        else:
+            index = [i for i, y in enumerate(trainY) if y != 9]
+            train_num = 50000
+        # print len(index)
+        # print train_num
+
+        trainX_left = trainX[index]
+        trainY_left = trainY[index]
+        num_left = trainY_left.size
+        #训练集
+        trX = trainX_left[:train_num] / 255.
+        trY = trainY_left[:train_num]
+        # print trY.size
+        #验证集
+        valX = trainX_left[train_num:, ] / 255.
+        valY = trainY_left[train_num:]
+        # print valY.size
+        #训练集的样本数
+        num_tr_batch = train_num
+        #验证集的样本数
+        num_val_batch =  num_left - train_num
+
+        # print num_tr_batch
+        # print num_val_batch
+        return trX, trY, num_tr_batch, valX, valY, num_val_batch
+    else:
+        fd = open(os.path.join(path, 't10k-images-idx3-ubyte'))
+        loaded = np.fromfile(file=fd, dtype=np.uint8)
+        teX = loaded[16:].reshape((10000, 28, 28, 1)).astype(np.float)
+
+        fd = open(os.path.join(path, 't10k-labels-idx1-ubyte'))
+        loaded = np.fromfile(file=fd, dtype=np.uint8)
+        teY = loaded[8:].reshape((10000)).astype(np.int32)
+
+        # 数据筛选
+        # 是增量训练的数据
+        if type == 'inl':
+            index = [i for i, y in enumerate(teY) if y == 9]
+        else:
+            index = [i for i, y in enumerate(teY) if y != 9]
+
+        teX2=teX[index]
+        teY2=teY[index]
+        num_te_batch = teY2.size // batch_size
+        return teX2 / 255., teY2, num_te_batch
