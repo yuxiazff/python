@@ -12,7 +12,6 @@ index=[i for i,y in enumerate(trainY) if y==9]
 def load_mnist_2(batch_size, type='inl', is_training=True):
     '''
     功能：读数据集。训练初始模型：读取0-8    训练增量学习的模型：读取9
-    作者：朱凡凡
     :param batch_size:
     :param type: 是训练初始模型，还是训练增量学习的模型
     :param is_training:
