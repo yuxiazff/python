@@ -43,6 +43,6 @@ def read(list_txt_path,folder_path):
     f1.close()
 
 read(train_txt_path,image_dir)
-read(train_txt_path,image_dir)
-read(train_txt_path,image_dir)
+read(val_txt_path,image_dir)
+read(test_txt_path,image_dir)
 
