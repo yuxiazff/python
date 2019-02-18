@@ -1,0 +1,48 @@
+import os
+import random
+
+corpus_dir = '/home/cext/caffe-project/vgg-inl/corpus'
+image_dir = corpus_dir + '/image'
+# 图片的格式
+image_type = 'jpg'
+
+
+# 训练集的文件列表
+train_txt_path = corpus_dir + '/list/train.txt'
+# 验证集的文件列表
+val_txt_path = corpus_dir + '/list/val.txt'
+# 测试集的文件列表
+test_txt_path = corpus_dir + '/list/test.txt'
+
+temp_txt_path = corpus_dir + '/list/temp.txt'
+
+def read(list_txt_path,folder_path):
+    '''
+    遍历文件夹下的所有子文件夹中的文件，生成一个文件列表
+    '''
+    temp_txt = open(temp_txt_path,'w')
+    # 列出文件夹下所有的目录与文件
+    for root,dirs,files in os.walk(folder_path):
+        for dir in dirs:
+            files = os.listdir(os.path.join(folder_path,dir))
+            for file in files:
+                temp_txt.write(dir+'/'+file + '\n')
+    temp_txt.close()
+
+   #随机打乱顺序
+    with open(temp_txt_path, "r") as f1:
+        with open(list_txt_path, "w") as f2:
+            lines = f1.readlines()
+            f1len = len(lines)
+            s=range(0,f1len)
+            random.shuffle(s)
+            for i in s:
+                print lines[i]
+                f2.write(lines[i])
+    f2.close()
+    f1.close()
+
+read(train_txt_path,image_dir)
+read(train_txt_path,image_dir)
+read(train_txt_path,image_dir)
+
